@@ -4,7 +4,7 @@
     <div class="st-body">
       <SideMenu></SideMenu>
       <div class="st-main">
-        main
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -18,9 +18,11 @@ import HeadMenu from "./components/HeadMenu.vue";
 <style scoped lang="stylus">
 .st-layout
   display flex
+  height 100%
   flex-direction column
 
   .st-body
+    height 100%
     display flex
     .st-main
       display flex
