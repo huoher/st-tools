@@ -1,6 +1,6 @@
 <template>
   <div class="head-menu">
-    <img src="../../assets/logo.svg" class="logo">
+    <img src="@/assets/logo.svg" class="logo">
     <p class="title">ST工具箱</p>
   </div>
 </template>
