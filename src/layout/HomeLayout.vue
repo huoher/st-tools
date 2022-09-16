@@ -25,5 +25,6 @@ import HeadMenu from "./components/HeadMenu.vue";
     height 100%
     display flex
     .st-main
+      width 100%
       display flex
 </style>

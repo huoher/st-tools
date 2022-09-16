@@ -25,9 +25,9 @@ const options = [
             }
           }
         },
-        { default: () => "一键下班" }
+        {default: () => "一键下班"}
     ),
-    key: "go-back-home",
+    key: "go-back-home"
   }
 ]
 </script>
