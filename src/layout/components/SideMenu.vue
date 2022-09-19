@@ -28,6 +28,36 @@ const options = [
         {default: () => "一键下班"}
     ),
     key: "go-back-home"
+  },
+  {
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "recordsCalendar",
+            params: {
+              lang: "zh-CN"
+            }
+          }
+        },
+        {default: () => "查看补录"}
+    ),
+    key: "recordsCalendar"
+  },
+  {
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "addRecords",
+            params: {
+              lang: "zh-CN"
+            }
+          }
+        },
+        {default: () => "编辑信息"}
+    ),
+    key: "addRecords"
   }
 ]
 </script>
