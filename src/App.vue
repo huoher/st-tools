@@ -1,5 +1,5 @@
 <script setup>
-import {NConfigProvider, zhCN, dateZhCN} from "naive-ui"
+import { NConfigProvider, zhCN, dateZhCN } from 'naive-ui'
 // This starter template is using Vue 3 <script setup> SFCs
 </script>
 
@@ -9,12 +9,14 @@ import {NConfigProvider, zhCN, dateZhCN} from "naive-ui"
   </n-config-provider>
 </template>
 
-<style>
-#app {
-  height: 100%;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-}
+<style lang="stylus">
+#app
+  height: 100%
+  font-family: Avenir, Helvetica, Arial, sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  text-align: center
+
+  .n-config-provider
+    height 100%
 </style>
