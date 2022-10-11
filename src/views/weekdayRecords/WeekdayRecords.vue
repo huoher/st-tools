@@ -15,15 +15,37 @@
       <template #footer>
         <div class="extra-work-time">
           18:00 - 21:12
+          <span class="info">
+            您已点击下班，如需修改，请前往历史记录中修改
+          </span>
         </div>
       </template>
     </n-result>
   </div>
+  <n-modal v-model:show="inputModal">
+    <div>
+      <n-card
+          style="width: 600px"
+          title=" "
+          :bordered="false"
+          size="huge"
+          role="dialog"
+          aria-modal="true"
+      >
+        <n-input-group>
+          <n-input clearable v-model:value="record.info" size="large" round placeholder="在此输入加班备注"/>
+          <n-button type="primary" round size="large" @click="saveRecords">
+            保存
+          </n-button>
+        </n-input-group>
+      </n-card>
+    </div>
+  </n-modal>
 </template>
 
 <script setup>
-import { NResult, NTime } from 'naive-ui'
-import { onMounted, ref } from 'vue'
+import { NResult, NButton, NTime, NInput, NInputGroup, NModal, NCard } from 'naive-ui'
+import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import RecordsImage from '@/views/weekdayRecords/RecordsImage.vue'
@@ -31,7 +53,16 @@ import RecordsImage from '@/views/weekdayRecords/RecordsImage.vue'
 const working = ref(true)
 
 function quitWork() {
+  inputModal.value = true
+}
+
+const inputModal = ref(false)
+
+const record = reactive({ info: '' })
+
+function saveRecords() {
   working.value = false
+  inputModal.value = false
 }
 
 dayjs.extend(customParseFormat)
@@ -86,4 +117,9 @@ function currentDateTime() {
 
 .extra-work-time
   font-size 2em
+  display inline-flex
+  flex-direction column
+
+  .info
+    font-size .6em
 </style>
