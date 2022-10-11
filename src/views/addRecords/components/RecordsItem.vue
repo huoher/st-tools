@@ -1,17 +1,16 @@
 <template>
   <div>
-    <el-time-picker
-        v-model="startTime"
-        is-range
-        range-separator="-"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间"
-    />
+    <n-space>
+      <n-time-picker input-readonly default-formatted-value="00:12" format="HH:mm"/>
+      <p>至</p>
+      <n-time-picker input-readonly :default-value="1183135260000" format="HH:mm"/>
+    </n-space>
   </div>
 </template>
 
 <script setup>
-import {ref} from "vue";
+import { NSpace, NTimePicker } from 'naive-ui'
+import { ref } from 'vue'
 
 const startTime = ref(null)
 const endTime = ref(null)
