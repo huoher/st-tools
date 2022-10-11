@@ -4,9 +4,6 @@
       <span class="today-mark">{{ today }}</span>
       <n-button strong secondary type="primary" @click="addRecords">新增</n-button>
     </div>
-    <div class="main-img">
-      <img src="@/assets/icon/工作安排.svg">
-    </div>
     <div>
       <div v-for="item in recordsList" class="records-list-item">
         <RecordsItem></RecordsItem>
