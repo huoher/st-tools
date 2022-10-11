@@ -1,33 +1,44 @@
 <template>
-  <div class="weekday-records">
+  <div class="weekday-records" v-if="working">
     <div class="time-range">
       <span>18:00:00</span>
       <span>-</span>
       <n-time :time="today" format="hh:mm:ss"/>
     </div>
     <RecordsImage></RecordsImage>
-    <div class="quit-work">
+    <div class="quit-work" @click="quitWork">
       <span>一键下班</span>
     </div>
+  </div>
+  <div v-else>
+    <n-result status="success" description="加班记录成功">
+      <template #footer>
+        <div class="extra-work-time">
+          18:00 - 21:12
+        </div>
+      </template>
+    </n-result>
   </div>
 </template>
 
 <script setup>
-import { NButton, NTime } from 'naive-ui'
+import { NResult, NTime } from 'naive-ui'
 import { onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import RecordsImage from '@/views/weekdayRecords/RecordsImage.vue'
 
-dayjs.extend(customParseFormat)
+const working = ref(true)
 
+function quitWork() {
+  working.value = false
+}
+
+dayjs.extend(customParseFormat)
 const today = ref(new Date())
 
 onMounted(() => {
   currentDateTime()
-  console.log(dayjs().year())
-  console.log(dayjs().month())
-  console.log(dayjs().date())
 })
 
 function currentDateTime() {
@@ -68,7 +79,11 @@ function currentDateTime() {
   display flex
   align-items center
   justify-content center
+
   &:hover
     cursor pointer
     background-color #42b922
+
+.extra-work-time
+  font-size 2em
 </style>
