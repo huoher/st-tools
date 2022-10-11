@@ -2,7 +2,7 @@
   <div
       @dblclick="handleDbClick"
       class="extra-work"
-       :class="{
+      :class="{
     'current-month': props.data.type === 'current-month',
      }">
     <span class="date">{{ theDay }}</span>
@@ -11,8 +11,9 @@
 </template>
 
 <script setup>
-import dayjs from "dayjs";
-import {computed} from "vue";
+import dayjs from 'dayjs'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const AdvancedFormat = require('dayjs/plugin/advancedFormat')
 dayjs.extend(AdvancedFormat)
@@ -20,18 +21,22 @@ dayjs.extend(AdvancedFormat)
 const props = defineProps({
   data: {
     type: Object,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const theDay = computed(() => {
   // current-month
-  return dayjs(props.data.day, "YYYY-MM-DD").date()
+  return dayjs(props.data.day, 'YYYY-MM-DD').date()
 })
 
-function handleDbClick () {
-  console.log(dayjs(props.data.day, "YYYY-MM-DD"))
-  // dayjs(props.data.day, "YYYY-MM-DD")
+const router = useRouter()
+
+function handleDbClick() {
+  console.log(props.data.day)
+  console.log(dayjs(props.data.day, 'YYYY-MM-DD'))
+  router.push(`/addRecords/${props.data.day}`)
+// TODO 根据日期跳转到该日的编辑上面
 }
 </script>
 
