@@ -33,7 +33,7 @@
           aria-modal="true"
       >
         <n-input-group>
-          <n-input clearable v-model:value="record.info" size="large" round placeholder="在此输入加班备注"/>
+          <n-input clearable v-model:value="inputMark" size="large" round placeholder="在此输入加班备注"/>
           <n-button type="primary" round size="large" @click="saveRecords">
             保存
           </n-button>
@@ -49,6 +49,7 @@ import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import RecordsImage from '@/views/weekdayRecords/RecordsImage.vue'
+import { useRecordsStore } from '@/store/records'
 
 const working = ref(true)
 
@@ -58,11 +59,25 @@ function quitWork() {
 
 const inputModal = ref(false)
 
-const record = reactive({ info: '' })
+const inputMark = ref(null)
+const record = reactive({ infoList: [{}], date: '' })
 
+const store = useRecordsStore()
 function saveRecords() {
   working.value = false
   inputModal.value = false
+
+  record.date = dayjs().format('YYYY-MM-DD')
+
+  const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
+
+  // 18:00正常下班至真正下班时间
+  record.infoList = [{
+    start: dayjs().set('hour', 18).set('minute', 0).set('second', 0).format('YYYY-MM-DD HH:mm:ss'),
+    end: now,
+    mark: inputMark.value,
+  }]
+  store.saveRecord(record)
 }
 
 dayjs.extend(customParseFormat)

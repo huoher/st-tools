@@ -1,6 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
+import db from './lowdb'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -21,7 +22,7 @@ if (!app.requestSingleInstanceLock()) {
 process.env.DIST = join(__dirname, '../..')
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : join(process.env.DIST, '../public')
 
-let win =  null
+let win = null
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js')
 const url = process.env.VITE_DEV_SERVER_URL
@@ -63,6 +64,10 @@ async function createWindow() {
   })
 }
 
+db.data = { key: 'value' }
+db.write().then(r => {
+})
+
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
@@ -85,6 +90,15 @@ app.on('activate', () => {
   } else {
     createWindow()
   }
+})
+
+ipcMain.on('save-record', (event, args) => {
+  console.log(event)
+  console.log(args)
+  const records = JSON.parse(args)
+  db.data = records
+  db.write().then(r => {
+  })
 })
 
 // new window example arg: new windows url
