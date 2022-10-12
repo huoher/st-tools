@@ -1,10 +1,15 @@
 import { join, dirname } from 'path'
 import { Low, JSONFile, LowSync, JSONFileSync } from 'lowdb'
 import fs from 'fs-extra'
+import { cloneDeep } from 'lodash'
 import LodashId from 'lodash-id'
 import { fileURLToPath } from 'url'
 
 import { app } from 'electron'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.extend(customParseFormat)
 
 const USER_DOCUMENT_PATH = app.getPath('documents')
 const STORE_PATH = join(USER_DOCUMENT_PATH, 'StTools')
@@ -16,10 +21,44 @@ if (process.type !== 'renderer') {
   }
 }
 
-const file = join(STORE_PATH, 'db.json')
-console.log(file)
-const adapter = new JSONFile(file)
-const db = new Low(adapter)
 
+class DataSource {
+  constructor(records) {
+    console.log(JSON.stringify(records))
+    const { date } = records
+    this.keyDay = dayjs(date, 'YYYY-MM-DD').format('YYYY-MM')
+
+    const file = join(STORE_PATH, `${this.keyDay}.json`)
+    const adapter = new JSONFile(file)
+    this.db = new Low(adapter)
+  }
+
+  async saveRecords(records) {
+    if (fileNames.includes(this.keyDay)) {
+      await this.db.read()
+    }
+
+    const data = cloneDeep(this.db.data) || {}
+    console.log(data)
+    data[this.keyDay] = records
+
+    this.db.data = cloneDeep(data)
+    await this.db.write()
+  }
+}
+
+const fileNames = []
+fs.readdir(STORE_PATH, (err, files) => {
+  if (err) {
+    throw err
+  }
+
+  fileNames.splice(0, fileNames.length, ...files)
+  // files object contains all files names
+  // log them on console
+  files.forEach(file => {
+    console.log(file)
+  })
+})
 // Alternatively, you can also use this syntax if you prefer
-export default db
+export default DataSource

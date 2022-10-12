@@ -6,10 +6,8 @@ export const useRecordsStore = defineStore('records', () => {
   const records = reactive({})
 
   function saveRecord(record) {
-    const { date, infoList } = record
-
-    records[date] = infoList
-    ipcRenderer.send('save-record', JSON.stringify(records))
+    ipcRenderer.send('save-record', JSON.stringify(record))
+    console.log(JSON.stringify(record))
   }
 
   return { records, saveRecord }

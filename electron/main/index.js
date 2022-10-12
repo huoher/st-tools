@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
 import db from './lowdb'
+import DataSource from './lowdb'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -64,9 +65,6 @@ async function createWindow() {
   })
 }
 
-db.data = { key: 'value' }
-db.write().then(r => {
-})
 
 app.whenReady().then(createWindow)
 
@@ -93,12 +91,10 @@ app.on('activate', () => {
 })
 
 ipcMain.on('save-record', (event, args) => {
-  console.log(event)
-  console.log(args)
   const records = JSON.parse(args)
-  db.data = records
-  db.write().then(r => {
-  })
+
+  const ds = new DataSource(records)
+  ds.saveRecords(records).then(r => {})
 })
 
 // new window example arg: new windows url
