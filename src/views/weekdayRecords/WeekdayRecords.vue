@@ -1,8 +1,11 @@
 <template>
   <div class="weekday-records" v-if="working">
-    <div class="time-range">
+    <div class="time-range" v-if="isExtraWorking">
       <span>18:00:00</span>
       <span>-</span>
+      <n-time :time="today" format="hh:mm:ss"/>
+    </div>
+    <div v-else class="time-range">
       <n-time :time="today" format="hh:mm:ss"/>
     </div>
     <RecordsImage></RecordsImage>
@@ -44,8 +47,8 @@
 </template>
 
 <script setup>
-import { NResult, NButton, NTime, NInput, NInputGroup, NModal, NCard } from 'naive-ui'
-import { onMounted, reactive, ref } from 'vue'
+import { NResult, NButton, NTime, NInput, NInputGroup, NModal, NCard, useMessage } from 'naive-ui'
+import { computed, onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import RecordsImage from '@/views/weekdayRecords/RecordsImage.vue'
@@ -53,9 +56,21 @@ import { useRecordsStore } from '@/store/records'
 
 const working = ref(true)
 
+const message = useMessage()
+
 function quitWork() {
+  if (isExtraWorking) {
+    message.warning('当前没到下班时间')
+    return
+  }
   inputModal.value = true
 }
+
+
+const normalQuitTime = dayjs().hour(18).minute(0).second(0).millisecond(0)
+const isExtraWorking = computed(() => {
+  return dayjs().isAfter(normalQuitTime)
+})
 
 const inputModal = ref(false)
 
@@ -63,6 +78,7 @@ const inputMark = ref(null)
 const record = reactive({ infoList: [{}], date: '' })
 
 const store = useRecordsStore()
+
 function saveRecords() {
   working.value = false
   inputModal.value = false

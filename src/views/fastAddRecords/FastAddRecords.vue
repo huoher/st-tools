@@ -1,10 +1,13 @@
 <template>
   <div class="fast-quit-work">
-    <WeekdayRecords></WeekdayRecords>
+    <n-message-provider>
+      <WeekdayRecords></WeekdayRecords>
+    </n-message-provider>
   </div>
 </template>
 
 <script setup>
+import { NMessageProvider } from 'naive-ui'
 import WeekdayRecords from '@/views/weekdayRecords/WeekdayRecords.vue'
 </script>
 
