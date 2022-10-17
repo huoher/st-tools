@@ -3,10 +3,10 @@
     <div class="time-range" v-if="isExtraWorking">
       <span>18:00:00</span>
       <span>-</span>
-      <n-time :time="today" format="hh:mm:ss"/>
+      <n-time :time="today" format="HH:mm:ss" time-zone="Asia/Shanghai"/>
     </div>
     <div v-else class="time-range">
-      <n-time :time="today" format="hh:mm:ss"/>
+      <n-time :time="today" time-zone="Asia/Shanghai"/>
     </div>
     <RecordsImage></RecordsImage>
     <div class="quit-work" @click="quitWork">

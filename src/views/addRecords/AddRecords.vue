@@ -17,15 +17,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { NButton } from 'naive-ui'
 import RecordsItem from '@/views/addRecords/components/RecordsItem.vue'
 import { nanoid } from 'nanoid'
 import { useRoute } from 'vue-router'
+import { ipcRenderer } from 'electron'
+import { useRecordsStore } from '@/store/records'
 
 const route = useRoute()
 const today = ref(dayjs().format('YYYY-MM-DD'))
+
+const store = useRecordsStore()
+onMounted(() => {
+  store.getRecord(today.value)
+})
+
+ipcRenderer.on('date-record', async (event, ...args) => {
+  console.log(args)
+  recordsList.value = args
+})
 
 const recordsList = ref([])
 

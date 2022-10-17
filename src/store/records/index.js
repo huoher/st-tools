@@ -10,5 +10,13 @@ export const useRecordsStore = defineStore('records', () => {
     console.log(JSON.stringify(record))
   }
 
-  return { records, saveRecord }
+  /**
+   * @param date     // YYYY-MM-DD
+   */
+  function getRecord(date) {
+    console.log(date)
+    ipcRenderer.send('get-record', date)
+  }
+
+  return { records, saveRecord, getRecord }
 })

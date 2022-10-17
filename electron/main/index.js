@@ -94,7 +94,15 @@ ipcMain.on('save-record', (event, args) => {
   const records = JSON.parse(args)
 
   const ds = new DataSource(records)
-  ds.saveRecords(records).then(r => {})
+  ds.saveRecords(records).then(r => {
+  })
+})
+
+ipcMain.on('get-record', async (event, args) => {
+  console.log('get-record:' + args)
+  const ds = new DataSource({ args })
+  const record = await ds.readRecord(args)
+  win.webContents.send('date-record', record)
 })
 
 // new window example arg: new windows url

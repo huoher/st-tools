@@ -23,9 +23,7 @@ if (process.type !== 'renderer') {
 
 
 class DataSource {
-  constructor(records) {
-    console.log(JSON.stringify(records))
-    const { date } = records
+  constructor({ date }) {
     this.keyDay = dayjs(date, 'YYYY-MM-DD').format('YYYY-MM')
 
     const file = join(STORE_PATH, `${this.keyDay}.json`)
@@ -44,6 +42,12 @@ class DataSource {
 
     this.db.data = cloneDeep(data)
     await this.db.write()
+  }
+
+  async readRecord(date) {
+    await this.db.read()
+    console.log('data:' + JSON.stringify(this.db.data?.[this.keyDay] ?? null))
+    return this.db.data?.[this.keyDay] ?? null
   }
 }
 
