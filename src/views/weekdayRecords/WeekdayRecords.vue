@@ -17,7 +17,7 @@
     <n-result status="success" description="加班记录成功">
       <template #footer>
         <div class="extra-work-time">
-          18:00 - 21:12
+         {{ recordItem.end }}
           <span class="info">
             您已点击下班，如需修改，请前往历史记录中修改
           </span>
@@ -35,19 +35,29 @@
           role="dialog"
           aria-modal="true"
       >
-        <n-input-group>
-          <n-input clearable v-model:value="inputMark" size="large" round placeholder="在此输入加班备注"/>
-          <n-button type="primary" round size="large" @click="saveRecords">
-            保存
-          </n-button>
-        </n-input-group>
+        <n-form
+            ref="formRef"
+            inline
+            :model="recordItem"
+            :rules="recordFormRule"
+            size="medium"
+        >
+          <n-form-item path="mark" style="width: 100%">
+            <n-input-group>
+              <n-input clearable v-model:value="recordItem.mark" size="large" round placeholder="在此输入加班备注"/>
+              <n-button type="primary" round size="large" @click="saveRecords">
+                保存
+              </n-button>
+            </n-input-group>
+          </n-form-item>
+        </n-form>
       </n-card>
     </div>
   </n-modal>
 </template>
 
 <script setup>
-import { NResult, NButton, NTime, NInput, NInputGroup, NModal, NCard, useMessage } from 'naive-ui'
+import { NForm, NFormItem, NResult, NButton, NTime, NInput, NInputGroup, NModal, NCard, useMessage } from 'naive-ui'
 import { computed, onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -59,7 +69,7 @@ const working = ref(true)
 const message = useMessage()
 
 function quitWork() {
-  if (isExtraWorking) {
+  if (!isExtraWorking) {
     message.warning('当前没到下班时间')
     return
   }
@@ -67,7 +77,7 @@ function quitWork() {
 }
 
 
-const normalQuitTime = dayjs().hour(18).minute(0).second(0).millisecond(0)
+const normalQuitTime = dayjs().hour(17).minute(0).second(0).millisecond(0)
 const isExtraWorking = computed(() => {
   return dayjs().isAfter(normalQuitTime)
 })
@@ -75,25 +85,41 @@ const isExtraWorking = computed(() => {
 const inputModal = ref(false)
 
 const inputMark = ref(null)
-const record = reactive({ infoList: [{}], date: '' })
+const record = reactive({ infoList: [], date: '' })
 
 const store = useRecordsStore()
+const recordItem = reactive({
+  start: normalQuitTime.format('YYYY-MM-DD HH:mm:ss'),
+  end: '',
+  mark: inputMark.value,
+})
+
+const recordFormRule = reactive({
+  mark: {
+    required: true,
+    message: '请输入加班备注',
+    trigger: 'blur',
+  },
+})
+
+const formRef = ref(null)
 
 function saveRecords() {
-  working.value = false
-  inputModal.value = false
+  formRef.value?.validate((errors) => {
+    if (!errors) {
+      working.value = false
+      inputModal.value = false
 
-  record.date = dayjs().format('YYYY-MM-DD')
+      record.date = dayjs().format('YYYY-MM-DD')
+      recordItem.end = dayjs().format('YYYY-MM-DD HH:mm:ss')
+      // 18:00正常下班至真正下班时间
+      record.infoList.push(recordItem)
 
-  const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
-
-  // 18:00正常下班至真正下班时间
-  record.infoList = [{
-    start: dayjs().set('hour', 18).set('minute', 0).set('second', 0).format('YYYY-MM-DD HH:mm:ss'),
-    end: now,
-    mark: inputMark.value,
-  }]
-  store.saveRecord(record)
+      store.saveRecord(record)
+    } else {
+      return
+    }
+  })
 }
 
 dayjs.extend(customParseFormat)

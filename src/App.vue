@@ -19,4 +19,8 @@ import { NConfigProvider, zhCN, dateZhCN } from 'naive-ui'
 
   .n-config-provider
     height 100%
+
+  .head-title, .st-head
+    -webkit-app-region drag
+    -webkit-user-select none
 </style>

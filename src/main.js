@@ -6,11 +6,11 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'dayjs/locale/zh-cn'
-import store from '@/store'
+import { createPinia } from 'pinia'
 
 createApp(App)
   .use(router)
-  .use(store)
+  .use(createPinia())
   .use(ElementPlus, {
     locale: zhCn,
   })

@@ -1,8 +1,6 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
-import db from './lowdb'
-import DataSource from './lowdb'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -34,7 +32,11 @@ async function createWindow() {
     title: 'Main window',
     width: 1040,
     height: 720,
+    minWidth: 1040,
+    minHeight: 720,
+    isMainWin: true,
     icon: join(process.env.PUBLIC, 'favicon.ico'),
+    frame: false,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -91,18 +93,11 @@ app.on('activate', () => {
 })
 
 ipcMain.on('save-record', (event, args) => {
-  const records = JSON.parse(args)
-
-  const ds = new DataSource(records)
-  ds.saveRecords(records).then(r => {
-  })
+  const record = JSON.parse(args)
 })
 
-ipcMain.on('get-record', async (event, args) => {
-  console.log('get-record:' + args)
-  const ds = new DataSource({ args })
-  const record = await ds.readRecord(args)
-  win.webContents.send('date-record', record)
+ipcMain.on('get-record', async (event, date) => {
+  win.webContents.send('date-record')
 })
 
 // new window example arg: new windows url

@@ -6,11 +6,28 @@
     </div>
     <div>
       <div v-for="item in recordsList" class="records-list-item">
-        <RecordsItem></RecordsItem>
+        <el-time-picker
+            value-format="HH:mm:ss"
+            format="HH:mm"
+            v-model="item.start"
+            :picker-options="{
+            }"
+            placeholder="任意时间点">
+        </el-time-picker>
+        <el-time-picker
+            value-format="HH:mm:ss"
+            format="HH:mm"
+            v-model="item.end"
+            :picker-options="{
+              minTime: item.start
+            }"
+            placeholder="任意时间点">
+        </el-time-picker>
+        <el-input v-model="item.mark" clearable placeholder="请输入加班备注"></el-input>
         <n-button strong secondary type="error" @click="delRecords(item)">删除</n-button>
       </div>
       <div>
-        <n-button type="primary">保存</n-button>
+        <n-button type="primary" @click="saveTodayRecords">保存</n-button>
       </div>
     </div>
   </div>
@@ -20,23 +37,30 @@
 import { onMounted, ref } from 'vue'
 import dayjs from 'dayjs'
 import { NButton } from 'naive-ui'
-import RecordsItem from '@/views/addRecords/components/RecordsItem.vue'
-import { nanoid } from 'nanoid'
 import { useRoute } from 'vue-router'
 import { ipcRenderer } from 'electron'
+
 import { useRecordsStore } from '@/store/records'
+import { nanoid } from 'nanoid'
 
 const route = useRoute()
 const today = ref(dayjs().format('YYYY-MM-DD'))
 
 const store = useRecordsStore()
 onMounted(() => {
+  // 从磁盘读取存储的数据
   store.getRecord(today.value)
 })
 
-ipcRenderer.on('date-record', async (event, ...args) => {
+ipcRenderer.on('date-record', async (event, args) => {
   console.log(args)
-  recordsList.value = args
+  recordsList.value = args.infoList.map(item => {
+    const { ...args } = item
+    return {
+      tid: nanoid(),
+      ...args,
+    }
+  })
 })
 
 const recordsList = ref([])
@@ -48,9 +72,11 @@ function addRecords() {
 }
 
 function delRecords(item) {
-  console.log(item)
   const index = recordsList.value.findIndex(i => i.tId === item.tId)
   recordsList.value.splice(index, 1)
+}
+
+function saveTodayRecords() {
 }
 </script>
 
